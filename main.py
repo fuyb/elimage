@@ -252,7 +252,8 @@ def main():
     if os.fork():
       sys.exit()
 
-  with open(PID_FILE, 'w') as pidfile:
+  os.mkdirs(os.path.dirname(PID_FILE))
+  with open(PID_FILE, 'w+') as pidfile:
       pidfile.write(str(os.getpid()))
       pidfile.flush()
 
