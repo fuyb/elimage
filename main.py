@@ -168,9 +168,13 @@ class IndexHandler(tornado.web.RequestHandler):
       for item in ret.items():
         self.write('%s: %s\n' % item)
     elif ret:
-      img_url = tuple(ret.values())[0]
-      content = self.link_template.generate(url=img_url)
-      self.write(content)
+        img_url = tuple(ret.values())[0]
+        user_agent = self.request.headers.get('User-Agent')
+        if user_agent is not None and user_agent.find('curl') != -1:
+            content = self.link_template.generate(url=img_url)
+            self.write(content)
+        else:
+            self.write(img_url)
     logging.info('%s posted: %s', self.request.remote_ip, ret)
 
 class ToolHandler(tornado.web.RequestHandler):
@@ -252,7 +256,7 @@ def main():
     if os.fork():
       sys.exit()
 
-  os.mkdirs(os.path.dirname(PID_FILE))
+  os.makedirs(os.path.dirname(PID_FILE), exist_ok=True)
   with open(PID_FILE, 'w+') as pidfile:
       pidfile.write(str(os.getpid()))
       pidfile.flush()
