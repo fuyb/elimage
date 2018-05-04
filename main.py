@@ -170,7 +170,8 @@ class IndexHandler(tornado.web.RequestHandler):
     elif ret:
         img_url = tuple(ret.values())[0]
         user_agent = self.request.headers.get('User-Agent')
-        if user_agent is not None and user_agent.find('curl') != -1:
+        print(user_agent)
+        if user_agent is not None and user_agent.find('curl') == -1:
             content = self.link_template.generate(url=img_url)
             self.write(content)
         else:
